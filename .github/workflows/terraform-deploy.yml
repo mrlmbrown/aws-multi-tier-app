@@ -37,6 +37,8 @@ jobs:
         working-directory: ./infra
         run: terraform init
 
+
+
       - name: Terraform Plan
         working-directory: ./infra
         run: terraform plan -var="my_ip=${{ secrets.MY_IP }}"
