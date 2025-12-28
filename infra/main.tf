@@ -154,3 +154,4 @@ data "aws_ami" "amazon_linux_2" {
 
 
 
+# SSH access enabled
