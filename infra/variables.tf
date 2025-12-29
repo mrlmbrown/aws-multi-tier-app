@@ -54,3 +54,9 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+
+variable "my_ip" {
+  description = "Your public IP address for SSH/RDP access (CIDR notation)"
+  type        = string
+  sensitive   = true
+}

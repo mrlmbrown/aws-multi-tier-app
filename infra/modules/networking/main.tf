@@ -132,7 +132,7 @@ resource "aws_instance" "web" {
               systemctl enable nginx
               EOF
 
- # Force replacement to attach SSH key
+  # Force replacement to attach SSH key
   lifecycle {
     create_before_destroy = false
   }
