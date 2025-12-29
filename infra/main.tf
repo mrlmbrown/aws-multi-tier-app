@@ -126,7 +126,7 @@ resource "aws_instance" "web" {
   user_data = <<-EOF
               #!/bin/bash
               yum update -y
-              yum install -y nginx
+              amazon-linux-extras install -y nginx1
               echo "<h1>Hello from Multi-Tier App - Phase 1</h1>" > /usr/share/nginx/html/index.html
               systemctl start nginx
               systemctl enable nginx
