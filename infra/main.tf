@@ -81,8 +81,8 @@ output "alb_dns_name" {
 }
 
 output "alb_url" {
-  description = "URL of the Application Load Balancer"
-  value       = "http://\"
+  description = "URL to access the Application Load Balancer"
+  value       = "http://${module.alb.alb_dns_name}"
 }
 
 output "db_endpoint" {
