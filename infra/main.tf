@@ -26,10 +26,10 @@ module "networking" {
 module "database" {
   source = "./modules/database"
 
-  project_name       = var.project_name
-  environment        = var.environment
-  vpc_id             = module.networking.vpc_id
-  db_subnet_ids      = module.networking.private_subnet_ids
+  project_name          = var.project_name
+  environment           = var.environment
+  vpc_id                = module.networking.vpc_id
+  db_subnet_ids         = module.networking.private_subnet_ids
   app_security_group_id = module.app.app_security_group_id
 
   db_name     = var.db_name
