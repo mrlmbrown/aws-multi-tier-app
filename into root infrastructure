@@ -1,0 +1,103 @@
+warning: in the working copy of 'infra/main.tf', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/infra/main.tf b/infra/main.tf[m
+[1mindex e69de29..59d669b 100644[m
+[1m--- a/infra/main.tf[m
+[1m+++ b/infra/main.tf[m
+[36m@@ -0,0 +1,97 @@[m
+[32m+[m[32m# Root Infrastructure Configuration[m
+[32m+[m[32mterraform {[m
+[32m+[m[32m  required_providers {[m
+[32m+[m[32m    aws = {[m
+[32m+[m[32m      source  = "hashicorp/aws"[m
+[32m+[m[32m      version = "~> 5.0"[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mprovider "aws" {[m
+[32m+[m[32m  region = var.aws_region[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m# Networking Module[m
+[32m+[m[32mmodule "networking" {[m
+[32m+[m[32m  source = "./modules/networking"[m
+[32m+[m
+[32m+[m[32m  project_name = var.project_name[m
+[32m+[m[32m  environment  = var.environment[m
+[32m+[m[32m  vpc_cidr     = var.vpc_cidr[m
+[32m+[m[32m  azs          = var.azs[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m# Database Module[m
+[32m+[m[32mmodule "database" {[m
+[32m+[m[32m  source = "./modules/database"[m
+[32m+[m
+[32m+[m[32m  project_name       = var.project_name[m
+[32m+[m[32m  environment        = var.environment[m
+[32m+[m[32m  vpc_id             = module.networking.vpc_id[m
+[32m+[m[32m  db_subnet_ids      = module.networking.private_subnet_ids[m
+[32m+[m[32m  app_security_group_id = module.app.app_security_group_id[m
+[32m+[m
+[32m+[m[32m  db_name     = var.db_name[m
+[32m+[m[32m  db_username = var.db_username[m
+[32m+[m[32m  db_password = var.db_password[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m# Application Load Balancer Module[m
+[32m+[m[32mmodule "alb" {[m
+[32m+[m[32m  source = "./modules/alb"[m
+[32m+[m
+[32m+[m[32m  project_name      = var.project_name[m
+[32m+[m[32m  environment       = var.environment[m
+[32m+[m[32m  vpc_id            = module.networking.vpc_id[m
+[32m+[m[32m  public_subnet_ids = module.networking.public_subnet_ids[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m# Application (EC2 Auto Scaling) Module[m
+[32m+[m[32mmodule "app" {[m
+[32m+[m[32m  source = "./modules/app"[m
+[32m+[m
+[32m+[m[32m  project_name          = var.project_name[m
+[32m+[m[32m  environment           = var.environment[m
+[32m+[m[32m  vpc_id                = module.networking.vpc_id[m
+[32m+[m[32m  private_subnet_ids    = module.networking.private_subnet_ids[m
+[32m+[m[32m  target_group_arn      = module.alb.target_group_arn[m
+[32m+[m[32m  alb_security_group_id = module.alb.alb_security_group_id[m
+[32m+[m
+[32m+[m[32m  instance_type    = var.instance_type[m
+[32m+[m[32m  min_size         = var.min_size[m
+[32m+[m[32m  max_size         = var.max_size[m
+[32m+[m[32m  desired_capacity = var.desired_capacity[m
+[32m+[m
+[32m+[m[32m  db_endpoint = module.database.db_endpoint[m
+[32m+[m[32m  db_name     = var.db_name[m
+[32m+[m[32m  db_username = var.db_username[m
+[32m+[m[32m  db_password = var.db_password[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m# Outputs[m
+[32m+[m[32moutput "vpc_id" {[m
+[32m+[m[32m  description = "VPC ID"[m
+[32m+[m[32m  value       = module.networking.vpc_id[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32moutput "alb_dns_name" {[m
+[32m+[m[32m  description = "DNS name of the Application Load Balancer"[m
+[32m+[m[32m  value       = module.alb.alb_dns_name[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32moutput "alb_url" {[m
+[32m+[m[32m  description = "URL of the Application Load Balancer"[m
+[32m+[m[32m  value       = "http://\"[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32moutput "db_endpoint" {[m
+[32m+[m[32m  description = "RDS database endpoint"[m
+[32m+[m[32m  value       = module.database.db_endpoint[m
+[32m+[m[32m  sensitive   = true[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32moutput "asg_name" {[m
+[32m+[m[32m  description = "Name of the Auto Scaling Group"[m
+[32m+[m[32m  value       = module.app.asg_name[m
+[32m+[m[32m}[m
