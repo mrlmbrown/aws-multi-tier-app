@@ -95,3 +95,5 @@ output "asg_name" {
   description = "Name of the Auto Scaling Group"
   value       = module.app.asg_name
 }
+
+# Testing CI/CD pipeline
